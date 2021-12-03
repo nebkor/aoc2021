@@ -1,3 +1,5 @@
+use std::process::exit;
+
 use aocf::Aoc;
 
 fn main() {
@@ -8,50 +10,63 @@ fn main() {
 fn p2() {
     let mut aoc = Aoc::new().year(Some(2021)).day(Some(3)).init().unwrap();
 
-    let input = aoc.get_input(false).unwrap().trim().to_string();
+    let input = aoc.get_input(false).unwrap();
 
-    let mut o2s = String::new();
+    let mut lines = input
+        .split('\n')
+        .filter(|l| !l.is_empty())
+        .collect::<Vec<_>>();
     for n in 0..12 {
         let mut maj = 0;
-        for line in input.lines() {
+        for line in lines.iter().filter(|l| !l.is_empty()) {
             if line.chars().nth(n).unwrap() == '1' {
                 maj += 1;
             } else {
                 maj -= 1;
             }
         }
+        if maj < 0 {
+            lines.retain(|l| l.chars().nth(n).unwrap() == '0');
+        } else {
+            lines.retain(|l| l.chars().nth(n).unwrap() == '1');
+        }
+    }
+
+    dbg!(&lines);
+    let o2s = lines[0];
+    let o2v = isize::from_str_radix(o2s, 2).unwrap();
+    dbg!(o2s, o2v);
+
+    //exit(0);
+
+    let mut lines = input
+        .split('\n')
+        .filter(|l| !l.is_empty())
+        .collect::<Vec<_>>();
+    for n in 0..12 {
+        if lines.len() < 2 {
+            break;
+        }
+        let mut maj = 0;
+        for line in lines.iter().filter(|l| !l.is_empty()) {
+            if line.chars().nth(n).unwrap() == '1' {
+                maj += 1;
+            } else {
+                maj -= 1;
+            }
+        }
+        dbg!(n, maj, &lines);
         if maj >= 0 {
-            o2s.push('1');
+            lines.retain(|l| l.chars().nth(n).unwrap() == '0');
         } else {
-            o2s.push('0');
+            lines.retain(|l| l.chars().nth(n).unwrap() == '1');
         }
     }
 
-    let o2v = isize::from_str_radix(&o2s, 2).unwrap();
-    dbg!(&o2s, o2v);
-
-    let mut co2s = String::new();
-    for n in 0..12 {
-        let mut maj = 0;
-        for line in input.lines() {
-            if line.chars().nth(n).unwrap() == '1' {
-                maj -= 1;
-            } else {
-                maj += 1;
-            }
-        }
-        if maj <= 0 {
-            co2s.push('0');
-        } else {
-            co2s.push('1');
-        }
-    }
-
-    let co2v = isize::from_str_radix(&co2s, 2).unwrap();
-
-    dbg!(co2v, co2v * o2v);
-
-    //
+    dbg!(&lines);
+    let co2s = lines[0];
+    let co2v = isize::from_str_radix(co2s, 2).unwrap();
+    dbg!(co2v, o2v, co2v * o2v);
 }
 
 fn p1() {
