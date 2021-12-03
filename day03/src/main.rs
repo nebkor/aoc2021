@@ -1,71 +1,66 @@
-use std::process::exit;
-
 use aocf::Aoc;
 
 fn main() {
-    //p1();
+    p1();
     p2();
 }
 
 fn p2() {
     let mut aoc = Aoc::new().year(Some(2021)).day(Some(3)).init().unwrap();
-
     let input = aoc.get_input(false).unwrap();
-
-    let mut lines = input
+    let mut olines = input
         .split('\n')
         .filter(|l| !l.is_empty())
         .collect::<Vec<_>>();
+    // for the co2 calculation
+    let mut clines = olines.clone();
+
+    // o2 calculation
     for n in 0..12 {
-        let mut maj = 0;
-        for line in lines.iter().filter(|l| !l.is_empty()) {
-            if line.chars().nth(n).unwrap() == '1' {
-                maj += 1;
-            } else {
-                maj -= 1;
-            }
-        }
-        if maj < 0 {
-            lines.retain(|l| l.chars().nth(n).unwrap() == '0');
-        } else {
-            lines.retain(|l| l.chars().nth(n).unwrap() == '1');
-        }
-    }
-
-    dbg!(&lines);
-    let o2s = lines[0];
-    let o2v = isize::from_str_radix(o2s, 2).unwrap();
-    dbg!(o2s, o2v);
-
-    //exit(0);
-
-    let mut lines = input
-        .split('\n')
-        .filter(|l| !l.is_empty())
-        .collect::<Vec<_>>();
-    for n in 0..12 {
-        if lines.len() < 2 {
+        if olines.len() < 2 {
             break;
         }
-        let mut maj = 0;
-        for line in lines.iter().filter(|l| !l.is_empty()) {
+
+        let mut bal = 0;
+        for line in olines.iter() {
             if line.chars().nth(n).unwrap() == '1' {
-                maj += 1;
+                bal += 1;
             } else {
-                maj -= 1;
+                bal -= 1;
             }
         }
-        dbg!(n, maj, &lines);
-        if maj >= 0 {
-            lines.retain(|l| l.chars().nth(n).unwrap() == '0');
+        if bal < 0 {
+            olines.retain(|l| l.chars().nth(n).unwrap() == '0');
         } else {
-            lines.retain(|l| l.chars().nth(n).unwrap() == '1');
+            olines.retain(|l| l.chars().nth(n).unwrap() == '1');
         }
     }
+    let o2s = olines[0];
+    let o2v = s2n(o2s);
+    dbg!(o2s, o2v);
 
-    dbg!(&lines);
-    let co2s = lines[0];
-    let co2v = isize::from_str_radix(co2s, 2).unwrap();
+    // co2 rating
+    for n in 0..12 {
+        if clines.len() < 2 {
+            break;
+        }
+        let mut bal = 0;
+        for line in clines.iter() {
+            if line.chars().nth(n).unwrap() == '1' {
+                bal += 1;
+            } else {
+                bal -= 1;
+            }
+        }
+
+        if bal < 0 {
+            clines.retain(|l| l.chars().nth(n).unwrap() == '1');
+        } else {
+            clines.retain(|l| l.chars().nth(n).unwrap() == '0');
+        }
+    }
+    let co2s = clines[0];
+    let co2v = s2n(co2s);
     dbg!(co2v, o2v, co2v * o2v);
 }
 
@@ -106,7 +101,7 @@ fn p1() {
         }
     }
 
-    let gamma = isize::from_str_radix(&bs, 2).unwrap();
+    let gamma = s2n(&bs);
 
     let mut eps = String::new();
 
@@ -118,22 +113,12 @@ fn p1() {
         }
     }
 
-    let epsilon = isize::from_str_radix(&eps, 2).unwrap();
+    let epsilon = s2n(&eps);
 
     // part 1
     dbg!(gamma * epsilon);
+}
 
-    let mut input = input.clone();
-    for (i, n) in bs.chars().enumerate() {
-        dbg!(&input, i, n, &bs);
-        let v = input
-            .lines()
-            .filter(|l| l.chars().nth(i).unwrap() == n)
-            .collect::<Vec<_>>();
-        input = v.join("\n");
-    }
-
-    //assert_eq!(input.len(), 12;
-    let o2_level = isize::from_str_radix(&input, 2).unwrap();
-    dbg!(o2_level);
+fn s2n(s: &str) -> isize {
+    isize::from_str_radix(s, 2).unwrap()
 }
