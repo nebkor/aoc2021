@@ -1,0 +1,16 @@
+[workspace]
+
+members = [
+  "day01", "day02", "day03", "day04",
+]
+
+[profile.dev]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 256
+rpath = false

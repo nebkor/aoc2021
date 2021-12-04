@@ -8,6 +8,3 @@ edition = "2021"
 [dependencies]
 aocf = { path = "/home/ardent/git/aocf" }
 itertools = "0.10.1"
-
-[profile.dev]
-opt-level = 3
